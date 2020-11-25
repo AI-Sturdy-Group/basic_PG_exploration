@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Training Laboratory</title>
+    </head>
+    <body>
+        <h1>Train an agent that uses basic policy gradient methods to
+        solve the SimpleContinuous environment</h1>
+
+        <form action="/start_training" method="post">
+            {% for name in arguments %}
+                <label for={{name}}>{{name}}:</label>
+                <input type="text" id={{name}} name={{name}}><br>
+            {% endfor %}
+            <input type="submit" value="Submit">
+        </form>
+    </body>
+</html>

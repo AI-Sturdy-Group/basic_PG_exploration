@@ -5,6 +5,7 @@ from typing import List, Tuple
 
 import tensorflow as tf
 import tensorflow_probability as tfp
+import numpy as np
 from tensorflow.keras import Model
 from tensorflow.keras.layers import Dense
 import tensorflow.keras.initializers as initializers
@@ -21,10 +22,10 @@ class SimpleModel(Model):
 
     def __init__(self, model_path: Path, layer_sizes: List[int], learning_rate: float,
                  actions_size: int, hidden_activation: str = "relu", mu_activation: str = "tanh",
-                 sigma_activation: str = "relu", dense_outputs: bool = True):
-        """
-        Creates a new FFNN model to represent a policy. Implements all needed
+                 sigma_activation: str = "relu"):
+        """Creates a new FFNN model to represent a policy. Implements all needed
         methods from tf.keras.Model.
+
         Args:
             model_path: Where to save the model and other training info
             layer_sizes: A list with the number of neurons on each hidden layer
@@ -33,8 +34,6 @@ class SimpleModel(Model):
             hidden_activation: Activation function for hidden layer neurons
             mu_activation: Activation function for mu
             sigma_activation: Activation function for sigma
-            dense_outputs: If true, mu and sigma layers are dense, else they are
-                only activation functions
         """
 
         super(SimpleModel, self).__init__()
@@ -45,22 +44,17 @@ class SimpleModel(Model):
         self.hidden_activation = hidden_activation
         self.mu_activation = mu_activation
         self.sigma_activation = sigma_activation
-        self.dense_outputs = dense_outputs
 
         self.hidden_layers = []
         for i in self.layer_sizes:
             self.hidden_layers.append(Dense(i, activation=self.hidden_activation))
 
-        if self.dense_outputs:
-            self.mu = None
-            raise NotImplementedError()
-        else:
-            self.mu = Dense(self.output_size, activation=self.mu_activation,
-                            kernel_initializer=initializers.Ones(),
-                            bias_initializer=initializers.Zeros(), trainable=False)
-            self.sigma = Dense(self.output_size, activation=self.sigma_activation,
-                               kernel_initializer=initializers.Ones(),
-                               bias_initializer=initializers.Zeros(), trainable=False)
+        self.mu = Dense(self.output_size, activation=self.mu_activation,
+                        kernel_initializer=initializers.Ones(),
+                        bias_initializer=initializers.Zeros())
+        self.sigma = Dense(self.output_size, activation=self.sigma_activation,
+                           kernel_initializer=initializers.Ones(),
+                           bias_initializer=initializers.Zeros())
 
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 
@@ -148,3 +142,34 @@ class SimpleModel(Model):
         mu, sigma = self(states)
         actions = tfp.distributions.Normal(mu, sigma).sample([1])
         return actions
+
+
+def test():
+    tf.config.run_functions_eagerly(True)
+    tf.random.set_seed(0)
+    model = SimpleModel(model_path=Path("experiments/tests"),
+                        layer_sizes=[],
+                        learning_rate=0.1,
+                        actions_size=1,
+                        hidden_activation="tanh",
+                        mu_activation="tanh",
+                        sigma_activation="softplus")
+
+    state = np.array([[1.], [1.], [1.]])
+    reward = np.array([0.5, 1., 0.2])
+
+    actions = model.produce_actions(state)
+    print(f"actions train= {actions}")
+
+    (mu, sigma), loss, log_probabilities = model.train_step(state, actions, reward)
+    print(f"Mu = {mu}")
+    print(f"Sigma = {sigma}")
+    print(f"loss = {loss}")
+    print(f"log_probabilities train= {log_probabilities}")
+
+    pass
+
+
+if __name__ == '__main__':
+
+    test()
