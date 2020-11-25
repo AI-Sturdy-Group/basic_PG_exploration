@@ -7,12 +7,23 @@
         <h1>Train an agent that uses basic policy gradient methods to
         solve the SimpleContinuous environment</h1>
 
-        <form action="/start_training" method="post">
-            {% for name in arguments %}
-                <label for={{name}}>{{name}}:</label>
-                <input type="text" id={{name}} name={{name}}><br>
-            {% endfor %}
-            <input type="submit" value="Submit">
+        <form action="/start_training" submit="post">
+            <table>
+                <tr>
+                    <th style="width: 50%">Configuration</th>
+                    <th style="width: 50%">Value</th>
+                </tr>
+                {% for name in arguments %}
+                <tr>
+                    <td style="text-align: right">{{name}}:</td>
+                    <td>
+                        <input type="text" name={{name}}>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+
+            <button style="cursor: pointer;" type="button" value="Submit" (click)="post">Submit</button>
         </form>
     </body>
 </html>
