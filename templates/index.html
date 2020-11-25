@@ -7,7 +7,7 @@
         <h1>Train an agent that uses basic policy gradient methods to
         solve the SimpleContinuous environment</h1>
 
-        <form action="/start_training" submit="post">
+        <form action="/start_training" method="post">
             <table>
                 <tr>
                     <th style="width: 50%">Configuration</th>
@@ -23,7 +23,7 @@
                 {% endfor %}
             </table>
 
-            <button style="cursor: pointer;" type="button" value="Submit" (click)="post">Submit</button>
+            <button style="cursor: pointer;" type="Submit" value="Submit">Submit</button>
         </form>
     </body>
 </html>
