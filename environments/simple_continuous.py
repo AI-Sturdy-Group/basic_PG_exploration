@@ -1,6 +1,5 @@
 import os
 import sys
-from typing import List
 from pathlib import Path
 
 import numpy as np
@@ -8,22 +7,24 @@ import numpy as np
 SCRIPT_DIR = Path(os.path.abspath(sys.argv[0]))
 sys.path.append(str(SCRIPT_DIR.parent.parent.parent.parent))
 
-from enviroments import Environment, Episode
+from .environments import Environment, Episode
+
 
 class SimpleContinuous(object):
-    """
-    Simple one step environment with a fixed best action solution.
+    """Simple one step environment with a fixed best action solution.
     Used for test purposes.
     """
 
-    def __init__(self, step_target: int, max_reward_step: float, steps: int = 1):
-        """
-        :param target: value to get to
-        :param max_reward_step: maximum reward per each step
-        :param target_range: maximum error allowed
-        :param steps: amount of steps the game has
+    def __init__(self, step_target: np.array, max_reward_step: float, steps: int = 1, fixed_states: bool = True):
+        """Creates a new simple continuous game
+
+        Args:
+            step_target: value to get to
+            max_reward_step: maximum reward per step
+            steps: number of steps to finish the game
         """
 
+        self.fixed_states = fixed_states
         self.steps = steps
         self.step_target = step_target
         self.target = step_target * steps
@@ -33,17 +34,21 @@ class SimpleContinuous(object):
         self.game_over = False
         self.target = 0
 
-    def get_state(self):
-        if self.state is None:
-            self.state = np.array([1])
-        else:
-            self.state.append(len(self.state) + 1)
+    def define_state(self):
+        if self.fixed_states:
+            if self.state is None:
+                self.state = np.array([1])
+            else:
+                np.append(self.state, [len(self.state) + 1])
 
-    def step(self, action=float):
-        reward = -((action - 4.0) ** 2) + 1.0
+    def step(self, action=np.array):
+        reward = 0.
 
-        self.sum_target += action
-        self.get_state()
+        for action in np.nditer(action):
+            reward += -((action - 4.0) ** 2) + 1.0
+            self.sum_target += action
+
+        self.define_state()
 
         state = np.array([self.state[len(self.state) - 1]])
 
@@ -52,10 +57,11 @@ class SimpleContinuous(object):
 
         return state, reward, self.game_over
 
+
 class SimpleContinuousEnvironment(Environment):
 
     def __init__(self):
-        env = SimpleContinuous(target=4., max_reward_step=1., steps=1)
+        env = SimpleContinuous(step_target=np.array([4.]), max_reward_step=1., steps=1)
         action_space = 1
         state_space = 1
         actions = ["action"]
@@ -92,3 +98,13 @@ class SimpleContinuousEnvironment(Environment):
 
     def close(self):
         raise NotImplementedError
+
+
+def main():
+    env = SimpleContinuousEnvironment()
+    print(env.get_environment_state())
+    print(env.environment_step())
+
+
+if __name__ == '__main__':
+    main()
