@@ -7,43 +7,45 @@ import numpy as np
 SCRIPT_DIR = Path(os.path.abspath(sys.argv[0]))
 sys.path.append(str(SCRIPT_DIR.parent.parent.parent.parent))
 
-from agents import *
+from agents.base_pg import BasePolicyGradientAgent, TrainingExperience
+from environments import Environment, EpisodesBatch
+from models import SimpleModel
 from code_utils.config_utils import BaseConfig
 
 
 class BaseAgentConfig(BaseConfig):
 
-    def __init__(self, name: str, config_file: Path, desc: str=None):
+    def __init__(self, config_dict: dict):
         """Agent configurations for Naive and Reward to Go Policy Gradient training.
 
         Args:
-            name: The name of the experiment/agent
-            config_file: The configurations file (must be .json)
+            config_dict: Configurations dictionary
         """
-        BaseConfig.__init__(self, config_file)
-        self.name = name
-        self.desc = desc
+        BaseConfig.__init__(self, config_dict=config_dict)
+        self.name = self.config_dict["name"]
+        self.desc = self.config_dict["desc"]
         self.training_steps = self.config_dict["training_steps"]
         self.show_every = self.config_dict["show_every"]
         self.learning_rate = self.config_dict["learning_rate"]
         self.experience_size = self.config_dict["experience_size"]
         self.minibatch_size = self.config_dict["minibatch_size"]
-        self.hidden_layer_size = self.config_dict["hidden_layer_size"]
-        self.hidden_layers_count = self.config_dict["hidden_layers_count"]
-        self.activation = self.config_dict["activation"]
+        self.hidden_layer_sizes = self.config_dict["hidden_layer_sizes"]
+        self.mu_activation = self.config_dict["mu_activation"]
+        self.hidden_activation = self.config_dict["hidden_activation"]
         self.save_policy_every = self.config_dict["save_policy_every"]
+        self.actions_size = self.config_dict["actions_size"]
+        self.sigma_activation = self.config_dict["sigma_activation"]
 
 
 class REINFORCEAgentConfig(BaseAgentConfig):
 
-    def __init__(self, name: str, config_file: Path, desc: str):
+    def __init__(self, config_dict: dict):
         """Agent configurations for REINFORCE Policy Gradient training.
 
         Args:
-            name: The name of the experiment/agent
-            config_file: The configurations file (must be .json)
+            config_dict: Configurations dictionary
         """
-        BaseAgentConfig.__init__(self, name, config_file, desc)
+        BaseAgentConfig.__init__(self, config_dict=config_dict)
         self.discount_factor = self.config_dict["discount_factor"]
 
 
@@ -57,15 +59,14 @@ class NaivePolicyGradientAgent(BasePolicyGradientAgent):
         https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html
     """
 
-    def __init__(self, env: Environment, agent_path: Path, agent_config: BaseAgentConfig):
+    def __init__(self, env: Environment, agent_path: Path, policy: SimpleModel,
+                 agent_config: BaseAgentConfig):
         """See base class."""
         BasePolicyGradientAgent.__init__(self,
                                          env=env,
                                          agent_path=agent_path,
-                                         layer_size=agent_config.hidden_layer_size,
-                                         learning_rate=agent_config.learning_rate,
-                                         hidden_layers_count=agent_config.hidden_layers_count,
-                                         activation=agent_config.activation)
+                                         policy=policy,
+                                         agent_config=agent_config)
 
     def get_training_experience(self, episodes: EpisodesBatch) -> TrainingExperience:
         """See base class."""
@@ -87,20 +88,19 @@ class NaivePolicyGradientAgent(BasePolicyGradientAgent):
         actions_batch = np.concatenate(actions_batch, axis=0)
 
         return TrainingExperience(states_batch, weights_batch, actions_batch,
-                                  total_rewards, episode_lengths, self.env.action_space)
+                                  total_rewards, episode_lengths)
 
 
 class RewardToGoPolicyGradientAgent(BasePolicyGradientAgent):
 
-    def __init__(self, env: Environment, agent_path: Path, agent_config: BaseAgentConfig):
+    def __init__(self, env: Environment, agent_path: Path, policy: SimpleModel,
+                 agent_config: BaseAgentConfig):
 
         BasePolicyGradientAgent.__init__(self,
                                          env=env,
                                          agent_path=agent_path,
-                                         layer_size=agent_config.hidden_layer_size,
-                                         learning_rate=agent_config.learning_rate,
-                                         hidden_layers_count=agent_config.hidden_layers_count,
-                                         activation=agent_config.activation)
+                                         policy=policy,
+                                         agent_config=agent_config)
 
     def get_training_experience(self, episodes: EpisodesBatch) -> TrainingExperience:
         """See base class."""
@@ -128,21 +128,20 @@ class RewardToGoPolicyGradientAgent(BasePolicyGradientAgent):
         weights_batch = np.concatenate(weights_batch, axis=0)
 
         return TrainingExperience(states_batch, weights_batch, actions_batch,
-                                  total_rewards, episode_lengths, self.env.action_space)
+                                  total_rewards, episode_lengths)
 
 
 class REINFORCEPolicyGradientAgent(BasePolicyGradientAgent):
 
-    def __init__(self, env: Environment, agent_path: Path, agent_config: REINFORCEAgentConfig):
+    def __init__(self, env: Environment, agent_path: Path, policy: SimpleModel,
+                 agent_config: REINFORCEAgentConfig):
 
         self.discount_factor = agent_config.discount_factor
         BasePolicyGradientAgent.__init__(self,
                                          env=env,
                                          agent_path=agent_path,
-                                         layer_size=agent_config.hidden_layer_size,
-                                         learning_rate=agent_config.learning_rate,
-                                         hidden_layers_count=agent_config.hidden_layers_count,
-                                         activation=agent_config.activation)
+                                         policy=policy,
+                                         agent_config=agent_config)
 
     def get_training_experience(self, episodes: EpisodesBatch) -> TrainingExperience:
         """See base class."""
@@ -173,4 +172,4 @@ class REINFORCEPolicyGradientAgent(BasePolicyGradientAgent):
         weights_batch = np.concatenate(weights_batch, axis=0)
 
         return TrainingExperience(states_batch, weights_batch, actions_batch,
-                                  total_rewards, episode_lengths, self.env.action_space)
+                                  total_rewards, episode_lengths)

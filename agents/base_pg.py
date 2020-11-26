@@ -12,6 +12,8 @@ SCRIPT_DIR = Path(os.path.abspath(sys.argv[0]))
 sys.path.append(str(SCRIPT_DIR.parent.parent.parent.parent))
 
 from models.models import SimpleModel
+from code_utils import BaseConfig
+from environments import Episode, Environment, EpisodesBatch
 
 
 logger = logging.getLogger()
@@ -57,7 +59,8 @@ class BasePolicyGradientAgent(object):
      - Has training logic
     """
 
-    def __init__(self, env: Environment, policy: SimpleModel, agent_path: Path):
+    def __init__(self, env: Environment, policy: SimpleModel, agent_path: Path,
+                 agent_config: BaseConfig):
         """Create an agent that uses a FFNN model to represent its policy.
 
         Args:
@@ -68,6 +71,7 @@ class BasePolicyGradientAgent(object):
         self.env = env
         self.agent_path = agent_path
         self.policy = policy
+        self.agent_config = agent_config
 
         self.ckpt = tf.train.Checkpoint(step=tf.Variable(-1), optimizer=self.policy.optimizer,
                                         net=self.policy)

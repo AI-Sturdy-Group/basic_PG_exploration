@@ -7,7 +7,7 @@ import numpy as np
 SCRIPT_DIR = Path(os.path.abspath(sys.argv[0]))
 sys.path.append(str(SCRIPT_DIR.parent.parent.parent.parent))
 
-from .environments import Environment, Episode
+from environments.environments import Environment, Episode
 
 
 class SimpleContinuous(object):
@@ -40,6 +40,10 @@ class SimpleContinuous(object):
                 self.state = np.array([1])
             else:
                 np.append(self.state, [len(self.state) + 1])
+
+    @staticmethod
+    def get_state():
+        return 1
 
     def step(self, action=np.array):
         reward = 0.
