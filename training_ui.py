@@ -5,7 +5,7 @@ import shutil
 from pathlib import Path
 
 import git
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 
 from agents import NaivePolicyGradientAgent, BaseAgentConfig
 from environments import SimpleContinuousEnvironment
@@ -64,21 +64,7 @@ def home():
 @app.route("/start_training", methods=["POST"])
 def start_training():
 
-    args_dict = {}
-    for name in DEFAULT_NAIVE_CONFIG.keys():
-        if request.form[name] == "None":
-            args_dict[name] = None
-        elif name == "hidden_layer_sizes":
-            if request.form[name] == "[]":
-                args_dict[name] = []
-            else:
-                str_value = request.form[name]
-                str_value = str_value[1:-1]
-                list_value = str_value.split(",")
-                list_value = [int(value) for value in list_value]
-                args_dict[name] = list_value
-        else:
-            args_dict[name] = DEFAULT_NAIVE_TYPES[name](request.form[name])
+    args_dict = request.get_json()
 
     agent_type = "naive"  # TODO: Make variable
     agent_path = Path("experiments", agent_type, args_dict["name"])
@@ -130,7 +116,7 @@ def start_training():
     with open(Path(agent_path, "experiment_information.json"), "w") as outfile:
         json.dump(experiment_info, outfile, indent=4)
 
-    return "Finished training!"
+    return jsonify(experiment_info), 200
 
 
 if __name__ == "__main__":
