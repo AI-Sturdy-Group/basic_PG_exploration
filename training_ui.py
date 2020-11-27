@@ -6,6 +6,7 @@ from pathlib import Path
 
 import git
 from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS
 
 from agents import NaivePolicyGradientAgent, BaseAgentConfig
 from environments import SimpleContinuousEnvironment
@@ -19,6 +20,7 @@ logging.getLogger("tensorflow").setLevel(logging.ERROR)
 
 
 app = Flask(__name__)
+cors = CORS(app)
 
 
 DEFAULT_NAIVE_CONFIG = {
@@ -37,23 +39,6 @@ DEFAULT_NAIVE_CONFIG = {
     "sigma_activation": "softplus"
 }
 
-DEFAULT_NAIVE_TYPES = {
-    "name": str,
-    "desc": str,
-    "training_steps": int,
-    "show_every": int,
-    "learning_rate": float,
-    "experience_size": int,
-    "minibatch_size": int,
-    "hidden_layer_sizes": list,
-    "hidden_activation": str,
-    "actions_size": int,
-    "save_policy_every": int,
-    "mu_activation": str,
-    "sigma_activation": str
-}
-
-
 # Home page
 @app.route("/")
 def home():
@@ -61,62 +46,66 @@ def home():
     return render_template("index.html", arguments=DEFAULT_NAIVE_CONFIG)
 
 
-@app.route("/start_training", methods=["POST"])
+@app.route("/start_training", methods=["POST", "GET"])
 def start_training():
 
-    args_dict = request.get_json()
+    if request.method == "POST":
+        args_dict = request.get_json()
+        print(args_dict)
 
-    agent_type = "naive"  # TODO: Make variable
-    agent_path = Path("experiments", agent_type, args_dict["name"])
-    agent_config = BaseAgentConfig(config_dict=args_dict)
+        agent_type = "naive"  # TODO: Make variable
+        agent_path = Path("experiments", agent_type, args_dict["name"])
+        agent_config = BaseAgentConfig(config_dict=args_dict)
 
-    # Get git version
-    repo = git.Repo(search_parent_directories=True)
-    sha = repo.head.object.hexsha
+        # # Get git version
+        # repo = git.Repo(search_parent_directories=True)
+        # sha = repo.head.object.hexsha
 
-    # Create experiment folder and handle old results
-    if agent_path.exists():
-        shutil.rmtree(agent_path)
-    agent_path.mkdir(parents=True)
+        # Create experiment folder and handle old results
+        if agent_path.exists():
+            shutil.rmtree(agent_path)
+        agent_path.mkdir(parents=True)
 
-    # Save experiments configurations and start experiment log
-    prepare_file_logger(logger, logging.INFO, Path(agent_path, "experiment.log"))
-    logger.info(f"Running {agent_type} policy gradient on SimpleContinuous")
-    agent_config.log_configurations(logger)
-    experiment_config_file = Path(agent_path, "configurations.json")
-    logger.info(f"Saving experiment configurations to {experiment_config_file}")
-    agent_config.to_json_file(experiment_config_file)
+        # Save experiments configurations and start experiment log
+        prepare_file_logger(logger, logging.INFO, Path(agent_path, "experiment.log"))
+        logger.info(f"Running {agent_type} policy gradient on SimpleContinuous")
+        agent_config.log_configurations(logger)
+        experiment_config_file = Path(agent_path, "configurations.json")
+        logger.info(f"Saving experiment configurations to {experiment_config_file}")
+        agent_config.to_json_file(experiment_config_file)
 
-    env = SimpleContinuousEnvironment()
-    policy = SimpleModel(model_path=Path(agent_path, "model"),
-                         layer_sizes=agent_config.hidden_layer_sizes,
-                         learning_rate=agent_config.learning_rate,
-                         actions_size=agent_config.actions_size,
-                         hidden_activation=agent_config.hidden_activation,
-                         mu_activation=agent_config.mu_activation,
-                         sigma_activation=agent_config.sigma_activation)
-    agent = NaivePolicyGradientAgent(env=env,
-                                     agent_path=agent_path,
-                                     policy=policy,
-                                     agent_config=agent_config)
+        env = SimpleContinuousEnvironment()
+        policy = SimpleModel(model_path=Path(agent_path, "model"),
+                            layer_sizes=agent_config.hidden_layer_sizes,
+                            learning_rate=agent_config.learning_rate,
+                            actions_size=agent_config.actions_size,
+                            hidden_activation=agent_config.hidden_activation,
+                            mu_activation=agent_config.mu_activation,
+                            sigma_activation=agent_config.sigma_activation)
+        agent = NaivePolicyGradientAgent(env=env,
+                                        agent_path=agent_path,
+                                        policy=policy,
+                                        agent_config=agent_config)
 
-    start_time = time.time()
-    test_reward = agent.train_policy(train_steps=agent_config.training_steps,
-                                     experience_size=agent_config.experience_size,
-                                     show_every=agent_config.show_every,
-                                     save_policy_every=agent_config.save_policy_every,
-                                     minibatch_size=agent_config.minibatch_size)
-    train_time = time.time() - start_time
+        start_time = time.time()
+        test_reward = agent.train_policy(train_steps=agent_config.training_steps,
+                                        experience_size=agent_config.experience_size,
+                                        show_every=agent_config.show_every,
+                                        save_policy_every=agent_config.save_policy_every,
+                                        minibatch_size=agent_config.minibatch_size)
+        train_time = time.time() - start_time
 
-    experiment_info = {"mean_test_reward": float(test_reward),
-                       "description": agent_config.desc,
-                       "git_hash": sha,
-                       "train_time": train_time}
+        experiment_info = {"mean_test_reward": float(test_reward),
+                        "description": agent_config.desc,
+                        "git_hash": None,
+                        "train_time": train_time}
 
-    with open(Path(agent_path, "experiment_information.json"), "w") as outfile:
-        json.dump(experiment_info, outfile, indent=4)
+        with open(Path(agent_path, "experiment_information.json"), "w") as outfile:
+            json.dump(experiment_info, outfile, indent=4)
 
-    return jsonify(experiment_info), 200
+        return experiment_info, 200
+
+
 
 
 if __name__ == "__main__":
