@@ -1,0 +1,42 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <form [formGroup]="configurationForm" class="form-group">
+                <table class="table table-sm">
+                    <tr>
+                        <th class="text-right" style="width: 50%;">Name</th>
+                        <th class="text-left" style="width: 50%;">Value</th>
+                    </tr>
+                    <tr *ngFor="let argument of this.keys; let i = index">
+                        <td class="text-right">{{argument}}</td>
+                        <td>
+                            <input class="form-control"
+                                [ngClass]="{'is-invalid': configurationForm.get(argument).errors && configurationForm.get(argument).touched}"
+                                formControlName="{{argument}}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="text-right">
+                            <button [disabled]="configurationForm.invalid" class="btn btn-primary" (click)="runExperiment()">Train</button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="col">
+            <ng-container *ngIf="this.experimentInfo">
+                <table class="table table-sm">
+                    <tr>
+                        <th style="width: 50%;">Data</th>
+                        <th style="width: 50%;">Result</th>
+                    </tr>
+                    <tr *ngFor="let data of this.experimentInfo | keyvalue">
+                        <td>{{data.key}}</td>
+                        <td>{{data.value}}</td>
+                    </tr>
+                </table>
+            </ng-container>
+        </div>
+    </div>
+</div>
