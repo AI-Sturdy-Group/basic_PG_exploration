@@ -150,13 +150,13 @@ class BasePolicyGradientAgent(object):
             The final policy test mean reward
         """
 
-        wandb.init(project="SimpleContinuous",
-                   group="naive",
-                   name=self.agent_config.name,
-                   notes=self.agent_config.desc,
-                   config=self.agent_config.config_dict,
-                   reinit=True,
-                   dir="experiments")
+        wandbrun = wandb.init(project="SimpleContinuous",
+                              group="naive",
+                              name=self.agent_config.name,
+                              notes=self.agent_config.desc,
+                              config=self.agent_config.config_dict,
+                              reinit=True,
+                              dir="experiments")
 
         train_steps_avg_rewards = []
         start_time = time.time()
@@ -239,6 +239,8 @@ class BasePolicyGradientAgent(object):
         logger.info(f"Best model test: {100} episodes mean reward = {test_reward}")
         self.save_agent()
         self.plot_training_info(moving_avg, self.agent_path)
+
+        wandbrun.finish()
 
         return test_reward
 
