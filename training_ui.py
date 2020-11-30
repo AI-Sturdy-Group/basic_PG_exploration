@@ -63,13 +63,28 @@ def start_training():
         sha = repo.head.object.hexsha
 
         # Create experiment folder and handle old results
+        deleted_old = False
         if agent_path.exists():
-            shutil.rmtree(agent_path)
+            if args_dict["replace"]:
+                shutil.rmtree(agent_path)
+                deleted_old = True
+            else:
+                experiment_info = {"mean_test_reward": None,
+                                   "description": f"The experiment {agent_path} already exists. "
+                                                  f"Change experiment name or use the replace "
+                                                  f"option to overwrite.",
+                                   "git_hash": sha,
+                                   "train_time": None}
+
+                return experiment_info, 200
+
         agent_path.mkdir(parents=True)
 
         # Save experiments configurations and start experiment log
         prepare_file_logger(logger, logging.INFO, Path(agent_path, "experiment.log"))
         logger.info(f"Running {agent_type} policy gradient on SimpleContinuous")
+        if deleted_old:
+            logger.info(f"Deleted old experiment in {agent_path}")
         agent_config.log_configurations(logger)
         experiment_config_file = Path(agent_path, "configurations.json")
         logger.info(f"Saving experiment configurations to {experiment_config_file}")

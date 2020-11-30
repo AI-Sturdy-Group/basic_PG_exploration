@@ -198,17 +198,34 @@ class BasePolicyGradientAgent(object):
                                 tf.summary.histogram(f"{state}", data=state_attribute_hist, step=training_steps)
 
                         tf.summary.scalar("mean_reward", data=mean_reward, step=training_steps)
-                        wandb.log({'epoch': training_steps, 'loss': loss, 'mean_reward': mean_reward},
+                        wandb.log({'training_step': training_steps, 'loss': loss, 'mean_reward': mean_reward},
                                   step=training_steps)
                         tf.summary.scalar("loss", data=loss, step=training_steps)
                         tf.summary.histogram("log_probabilities", data=log_probabilities, step=training_steps)
                         tf.summary.histogram("weights", data=data_batch[2], step=training_steps)
+                        wandb.log({"log_probabilities": wandb.Histogram(log_probabilities)}, step=training_steps)
+                        wandb.log({"weights": wandb.Histogram(data_batch[2])}, step=training_steps)
 
                         for action_idx, action in enumerate(self.env.actions):
-                            action_mus = policy_outputs[0][:, action_idx]
-                            action_sigmas = policy_outputs[1][:, action_idx]
-                            tf.summary.histogram(f"{action}_mu", data=action_mus, step=training_steps)
-                            tf.summary.histogram(f"{action}_sigma", data=action_sigmas, step=training_steps)
+                            if len(self.env.actions) == 1:
+                                action_mu = policy_outputs[0][0, 0]
+                                action_sigma = policy_outputs[1][0, 0]
+                                tf.summary.scalar("mu", data=action_mu, step=training_steps)
+                                tf.summary.scalar("sigma", data=action_sigma, step=training_steps)
+                                wandb.log({'mu': action_mu, 'sigma': action_sigma}, step=training_steps)
+                                wandb.log({'mu_w': self.policy.get_layer("dense_mu").kernel.numpy()[0],
+                                           'mu_b': self.policy.get_layer("dense_mu").bias.numpy()[0],
+                                           'sigma_w': self.policy.get_layer("dense_sigma").kernel.numpy()[0],
+                                           'sigma_b': self.policy.get_layer("dense_sigma").bias.numpy()[0]},
+                                          step=training_steps)
+
+                            else:
+                                action_mus = policy_outputs[0][:, action_idx]
+                                action_sigmas = policy_outputs[1][:, action_idx]
+                                tf.summary.histogram(f"{action}_mu", data=action_mus, step=training_steps)
+                                tf.summary.histogram(f"{action}_sigma", data=action_sigmas, step=training_steps)
+                                wandb.log({"mu": wandb.Histogram(action_mus),
+                                           "sigma": wandb.Histogram(action_sigmas)}, step=training_steps)
 
                     self.policy.summary_writer.flush()
 

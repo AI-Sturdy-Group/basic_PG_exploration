@@ -47,12 +47,13 @@ class SimpleModel(Model):
 
         self.hidden_layers = []
         for i in self.layer_sizes:
-            self.hidden_layers.append(Dense(i, activation=self.hidden_activation))
+            self.hidden_layers.append(Dense(i, activation=self.hidden_activation,
+                                            name=f"hidden_{len(self.hidden_layers)}"))
 
-        self.mu = Dense(self.output_size, activation=self.mu_activation,
+        self.mu = Dense(self.output_size, activation=self.mu_activation, name="dense_mu",
                         kernel_initializer=initializers.Ones(),
                         bias_initializer=initializers.Zeros())
-        self.sigma = Dense(self.output_size, activation=self.sigma_activation,
+        self.sigma = Dense(self.output_size, activation=self.sigma_activation, name="dense_sigma",
                            kernel_initializer=initializers.Ones(),
                            bias_initializer=initializers.Zeros())
 
