@@ -9,6 +9,7 @@ import { HomeComponent } from './home/home.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoadingInterceptors } from './interceptors/loading.interpectors';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     FormsModule,
     HttpClientModule,
     NgxSpinnerModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    TooltipModule.forRoot()
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptors, multi: true}],
   bootstrap: [AppComponent]

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Configuration } from '../model/configuration';
 import { ExperimentInfo } from '../model/experimentInfo';
 
@@ -40,7 +40,7 @@ export class HomeComponent implements OnInit {
       learning_rate: [0.001, Validators.min(0)],
       experience_size: [5, Validators.min(0)],
       minibatch_size: null,
-      hidden_layer_sizes: [[]],
+      hidden_layer_sizes: this.fb.array([]),
       hidden_activation: ['tanh', Validators.required],
       actions_size: [1, Validators.min(1)],
       save_policy_every: [5, Validators.min(0)],
@@ -57,6 +57,14 @@ export class HomeComponent implements OnInit {
     values.forEach(element => {
       this.experimentInfo[element] = next[element];
     });
+  }
+
+  addHiddenLayer() {
+    this.getFormArray().push(this.fb.control(0));
+  }
+
+  getFormArray() {
+    return this.configurationForm.get('hidden_layer_sizes') as FormArray;
   }
 
   typeOfValue(argument: string) {

@@ -65,6 +65,19 @@
                     </tr>
 
                     <tr>
+                        <td class="text-right"><label for="">Hidden Layers Size</label></td>
+                        <td>
+                            <div class="d-flex flex-row">
+                                <div *ngFor="let hiddenLayer of this.getFormArray().controls; let i = index">
+                                        <input type="number" class="form-control" style="width: 60px;" [formControl]="hiddenLayer">
+                                </div>
+                                <button class="btn btn-sm btn-success" [tooltip]="hiddenLayerTemplate" placement="auto"><i class="fa fa-plus-circle" (click)="addHiddenLayer()"></i></button>
+                                <ng-template #hiddenLayerTemplate>Add hidden layer</ng-template>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
                         <td class="text-right"><label for="">Hidden Activation</label></td>
                         <td>
                             <input type="text" class="form-control"
@@ -107,8 +120,9 @@
                     <tr>
                         <td></td>
                         <td class="text-right">
-                            <button [disabled]="configurationForm.invalid" class="btn btn-primary" (click)="runExperiment()">Train</button>
+                            <button [disabled]="configurationForm.invalid" [tooltip]="buttonDesc" placement="auto" class="btn btn-sm btn-primary" (click)="runExperiment()"><i class="fa fa-train"></i></button>
                         </td>
+                        <ng-template #buttonDesc>Train agent OBVIOUSLY</ng-template>
                     </tr>
                 </table>
             </form>
