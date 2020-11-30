@@ -7,7 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { LoadingInterceptors } from 'interceptors/loading.interpectors';
+import { LoadingInterceptors } from './interceptors/loading.interpectors';
 import { NgxSpinnerModule } from 'ngx-spinner';
 
 @NgModule({
