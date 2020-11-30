@@ -4,6 +4,7 @@ import os
 import sys
 from pathlib import Path
 
+import wandb
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
@@ -149,6 +150,14 @@ class BasePolicyGradientAgent(object):
             The final policy test mean reward
         """
 
+        wandbrun = wandb.init(project="SimpleContinuous",
+                              group="naive",
+                              name=self.agent_config.name,
+                              notes=self.agent_config.desc,
+                              config=self.agent_config.config_dict,
+                              reinit=True,
+                              dir="experiments")
+
         train_steps_avg_rewards = []
         start_time = time.time()
         training_steps = 0
@@ -189,6 +198,8 @@ class BasePolicyGradientAgent(object):
                                 tf.summary.histogram(f"{state}", data=state_attribute_hist, step=training_steps)
 
                         tf.summary.scalar("mean_reward", data=mean_reward, step=training_steps)
+                        wandb.log({'epoch': training_steps, 'loss': loss, 'mean_reward': mean_reward},
+                                  step=training_steps)
                         tf.summary.scalar("loss", data=loss, step=training_steps)
                         tf.summary.histogram("log_probabilities", data=log_probabilities, step=training_steps)
                         tf.summary.histogram("weights", data=data_batch[2], step=training_steps)
@@ -228,6 +239,8 @@ class BasePolicyGradientAgent(object):
         logger.info(f"Best model test: {100} episodes mean reward = {test_reward}")
         self.save_agent()
         self.plot_training_info(moving_avg, self.agent_path)
+
+        wandbrun.finish()
 
         return test_reward
 

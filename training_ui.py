@@ -5,7 +5,7 @@ import shutil
 from pathlib import Path
 
 import git
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request
 from flask_cors import CORS
 
 from agents import NaivePolicyGradientAgent, BaseAgentConfig
@@ -39,6 +39,7 @@ DEFAULT_NAIVE_CONFIG = {
     "sigma_activation": "softplus"
 }
 
+
 # Home page
 @app.route("/")
 def home():
@@ -57,7 +58,11 @@ def start_training():
         agent_path = Path("experiments", agent_type, args_dict["name"])
         agent_config = BaseAgentConfig(config_dict=args_dict)
 
+<<<<<<< HEAD
         # # Get git version
+=======
+        # Get git version
+>>>>>>> cc99b3769a03e70e8540b36014e55e5050de19e3
         repo = git.Repo(search_parent_directories=True)
         sha = repo.head.object.hexsha
 
@@ -76,36 +81,42 @@ def start_training():
 
         env = SimpleContinuousEnvironment()
         policy = SimpleModel(model_path=Path(agent_path, "model"),
-                            layer_sizes=agent_config.hidden_layer_sizes,
-                            learning_rate=agent_config.learning_rate,
-                            actions_size=agent_config.actions_size,
-                            hidden_activation=agent_config.hidden_activation,
-                            mu_activation=agent_config.mu_activation,
-                            sigma_activation=agent_config.sigma_activation)
+                             layer_sizes=agent_config.hidden_layer_sizes,
+                             learning_rate=agent_config.learning_rate,
+                             actions_size=agent_config.actions_size,
+                             hidden_activation=agent_config.hidden_activation,
+                             mu_activation=agent_config.mu_activation,
+                             sigma_activation=agent_config.sigma_activation)
         agent = NaivePolicyGradientAgent(env=env,
-                                        agent_path=agent_path,
-                                        policy=policy,
-                                        agent_config=agent_config)
+                                         agent_path=agent_path,
+                                         policy=policy,
+                                         agent_config=agent_config)
 
         start_time = time.time()
         test_reward = agent.train_policy(train_steps=agent_config.training_steps,
-                                        experience_size=agent_config.experience_size,
-                                        show_every=agent_config.show_every,
-                                        save_policy_every=agent_config.save_policy_every,
-                                        minibatch_size=agent_config.minibatch_size)
+                                         experience_size=agent_config.experience_size,
+                                         show_every=agent_config.show_every,
+                                         save_policy_every=agent_config.save_policy_every,
+                                         minibatch_size=agent_config.minibatch_size)
         train_time = time.time() - start_time
 
         experiment_info = {"mean_test_reward": float(test_reward),
+<<<<<<< HEAD
                         "description": agent_config.desc,
                         "git_hash": sha,
                         "train_time": train_time}
+=======
+                           "description": agent_config.desc,
+                           "git_hash": sha,
+                           "train_time": train_time}
+>>>>>>> cc99b3769a03e70e8540b36014e55e5050de19e3
 
         with open(Path(agent_path, "experiment_information.json"), "w") as outfile:
             json.dump(experiment_info, outfile, indent=4)
 
+        logger.removeHandler(logger.handlers[1])
+
         return experiment_info, 200
-
-
 
 
 if __name__ == "__main__":
