@@ -21,8 +21,8 @@ class BaseAgentConfig(BaseConfig):
         Args:
             config_dict: Configurations dictionary
         """
-        BaseConfig.__init__(self, config_dict=config_dict, name=self.config_dict["name"])
-        self.desc = self.config_dict["desc"]
+        BaseConfig.__init__(self, config_dict=config_dict, name=config_dict["name"],
+                            desc=config_dict["desc"])
         self.training_steps = self.config_dict["training_steps"]
         self.show_every = self.config_dict["show_every"]
         self.learning_rate = self.config_dict["learning_rate"]

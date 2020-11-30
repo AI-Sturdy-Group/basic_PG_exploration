@@ -150,7 +150,13 @@ class BasePolicyGradientAgent(object):
             The final policy test mean reward
         """
 
-        wandb.init(project=f"SimpleContinuous-naive-{self.agent_config.name}")
+        wandb.init(project="SimpleContinuous",
+                   group="naive",
+                   name=self.agent_config.name,
+                   notes=self.agent_config.desc,
+                   config=self.agent_config.config_dict,
+                   reinit=True,
+                   dir="experiments")
 
         train_steps_avg_rewards = []
         start_time = time.time()
