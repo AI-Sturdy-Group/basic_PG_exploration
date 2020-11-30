@@ -5,8 +5,9 @@ from pathlib import Path
 
 class BaseConfig(object):
 
-    def __init__(self, config_dict: dict):
+    def __init__(self, config_dict: dict, name: str):
         self.config_dict = config_dict
+        self.name = name
 
     @classmethod
     def from_json_file(cls, config_file: Path):
@@ -14,7 +15,7 @@ class BaseConfig(object):
         with open(config_file, "r", encoding="utf8") as cfile:
             config_dict = json.load(cfile)
 
-        return BaseConfig(config_dict)
+        return BaseConfig(config_dict, config_dict["name"])
 
     def log_configurations(self, logger: logging.Logger):
 
