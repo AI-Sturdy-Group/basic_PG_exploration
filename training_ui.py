@@ -58,11 +58,7 @@ def start_training():
         agent_path = Path("experiments", agent_type, args_dict["name"])
         agent_config = BaseAgentConfig(config_dict=args_dict)
 
-<<<<<<< HEAD
         # # Get git version
-=======
-        # Get git version
->>>>>>> cc99b3769a03e70e8540b36014e55e5050de19e3
         repo = git.Repo(search_parent_directories=True)
         sha = repo.head.object.hexsha
 
@@ -101,15 +97,9 @@ def start_training():
         train_time = time.time() - start_time
 
         experiment_info = {"mean_test_reward": float(test_reward),
-<<<<<<< HEAD
-                        "description": agent_config.desc,
-                        "git_hash": sha,
-                        "train_time": train_time}
-=======
                            "description": agent_config.desc,
                            "git_hash": sha,
                            "train_time": train_time}
->>>>>>> cc99b3769a03e70e8540b36014e55e5050de19e3
 
         with open(Path(agent_path, "experiment_information.json"), "w") as outfile:
             json.dump(experiment_info, outfile, indent=4)
