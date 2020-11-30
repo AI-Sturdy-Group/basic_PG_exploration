@@ -7,12 +7,101 @@
                         <th class="text-right" style="width: 50%;">Name</th>
                         <th class="text-left" style="width: 50%;">Value</th>
                     </tr>
-                    <tr *ngFor="let argument of this.keys; let i = index">
-                        <td class="text-right">{{argument}}</td>
+                    <tr>
+                        <td class="text-right"><label for="">Name</label></td>
                         <td>
-                            <input class="form-control"
-                                [ngClass]="{'is-invalid': configurationForm.get(argument).errors && configurationForm.get(argument).touched}"
-                                formControlName="{{argument}}">
+                            <input type="text" class="form-control"
+                                [ngClass]="{'is-invalid': configurationForm.get('name').errors && configurationForm.get('name').touched}"
+                                formControlName="name">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-right"><label for="">Description</label></td>
+                        <td>
+                            <input type="text" class="form-control"
+                                [ngClass]="{'is-invalid': configurationForm.get('desc').errors && configurationForm.get('desc').touched}"
+                                formControlName="desc">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-right"><label for="">Training Steps</label></td>
+                        <td>
+                            <input type="number" class="form-control"
+                                [ngClass]="{'is-invalid': configurationForm.get('training_steps').errors && configurationForm.get('training_steps').touched}"
+                                formControlName="training_steps">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-right"><label for="">Show Every</label></td>
+                        <td>
+                            <input type="number" class="form-control"
+                                [ngClass]="{'is-invalid': configurationForm.get('show_every').errors && configurationForm.get('show_every').touched}"
+                                formControlName="show_every">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-right"><label for="">Learning Rate</label></td>
+                        <td>
+                            <input type="number" class="form-control"
+                                [ngClass]="{'is-invalid': configurationForm.get('learning_rate').errors && configurationForm.get('learning_rate').touched}"
+                                formControlName="learning_rate">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-right"><label for="">Experience Size</label></td>
+                        <td>
+                            <input type="number" class="form-control"
+                                [ngClass]="{'is-invalid': configurationForm.get('experience_size').errors && configurationForm.get('experience_size').touched}"
+                                formControlName="experience_size">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-right"><label for="">Minibatch Size</label></td>
+                        <td>
+                            <input type="number" class="form-control"
+                                [ngClass]="{'is-invalid': configurationForm.get('minibatch_size').errors && configurationForm.get('minibatch_size').touched}"
+                                formControlName="minibatch_size">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="text-right"><label for="">Hidden Activation</label></td>
+                        <td>
+                            <input type="text" class="form-control"
+                                [ngClass]="{'is-invalid': configurationForm.get('hidden_activation').errors && configurationForm.get('hidden_activation').touched}"
+                                formControlName="hidden_activation">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-right"><label for="">Actions Size</label></td>
+                        <td>
+                            <input type="number" class="form-control"
+                                [ngClass]="{'is-invalid': configurationForm.get('actions_size').errors && configurationForm.get('actions_size').touched}"
+                                formControlName="actions_size">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-right"><label for="">Save Policy Every</label></td>
+                        <td>
+                            <input type="number" class="form-control"
+                                [ngClass]="{'is-invalid': configurationForm.get('save_policy_every').errors && configurationForm.get('save_policy_every').touched}"
+                                formControlName="save_policy_every">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-right"><label for="">Mu Activation</label></td>
+                        <td>
+                            <input type="text" class="form-control"
+                                [ngClass]="{'is-invalid': configurationForm.get('mu_activation').errors && configurationForm.get('mu_activation').touched}"
+                                formControlName="mu_activation">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-right"><label for="">Sigma Activation</label></td>
+                        <td>
+                            <input type="text" class="form-control"
+                                [ngClass]="{'is-invalid': configurationForm.get('sigma_activation').errors && configurationForm.get('sigma_activation').touched}"
+                                formControlName="sigma_activation">
                         </td>
                     </tr>
                     <tr>

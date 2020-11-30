@@ -58,8 +58,8 @@ def start_training():
         agent_config = BaseAgentConfig(config_dict=args_dict)
 
         # # Get git version
-        # repo = git.Repo(search_parent_directories=True)
-        # sha = repo.head.object.hexsha
+        repo = git.Repo(search_parent_directories=True)
+        sha = repo.head.object.hexsha
 
         # Create experiment folder and handle old results
         if agent_path.exists():
@@ -97,7 +97,7 @@ def start_training():
 
         experiment_info = {"mean_test_reward": float(test_reward),
                         "description": agent_config.desc,
-                        "git_hash": None,
+                        "git_hash": sha,
                         "train_time": train_time}
 
         with open(Path(agent_path, "experiment_information.json"), "w") as outfile:

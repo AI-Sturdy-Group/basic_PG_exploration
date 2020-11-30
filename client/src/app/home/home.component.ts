@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, createPlatformFactory, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Configuration } from '../model/configuration';
 import { ExperimentInfo } from '../model/experimentInfo';
@@ -57,6 +57,10 @@ export class HomeComponent implements OnInit {
     values.forEach(element => {
       this.experimentInfo[element] = next[element];
     });
+  }
+
+  typeOfValue(argument: string) {
+    return typeof(this.configurationForm.get(argument).value);
   }
 
 }
