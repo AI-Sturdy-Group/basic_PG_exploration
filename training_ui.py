@@ -58,7 +58,7 @@ def start_training():
         agent_path = Path("experiments", agent_type, args_dict["name"])
         agent_config = BaseAgentConfig(config_dict=args_dict)
 
-        # # Get git version
+        # Get git version
         repo = git.Repo(search_parent_directories=True)
         sha = repo.head.object.hexsha
 
