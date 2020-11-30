@@ -71,7 +71,7 @@
                                 <div *ngFor="let hiddenLayer of this.getFormArray().controls; let i = index">
                                         <input type="number" class="form-control" style="width: 60px;" [formControl]="hiddenLayer">
                                 </div>
-                                <button class="btn btn-sm btn-success" [tooltip]="hiddenLayerTemplate" placement="auto"><i class="fa fa-plus-circle" (click)="addHiddenLayer()"></i></button>
+                                <button class="btn btn-sm btn-success" [tooltip]="hiddenLayerTemplate" placement="auto" (click)="addHiddenLayer()"><i class="fa fa-plus-circle"></i></button>
                                 <ng-template #hiddenLayerTemplate>Add hidden layer</ng-template>
                             </div>
                         </td>
@@ -118,12 +118,19 @@
                         </td>
                     </tr>
                     <tr>
+                        <td class="text-right"><label for="">Replace previous train?</label></td>
+                        <td>
+                            <input type="checkbox" class="form-control" formControlName="replace">
+                        </td>
+                    </tr>
+                    <tr>
                         <td></td>
                         <td class="text-right">
                             <button [disabled]="configurationForm.invalid" [tooltip]="buttonDesc" placement="auto" class="btn btn-sm btn-primary" (click)="runExperiment()"><i class="fa fa-train"></i></button>
                         </td>
                         <ng-template #buttonDesc>Train agent OBVIOUSLY</ng-template>
                     </tr>
+
                 </table>
             </form>
         </div>

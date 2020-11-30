@@ -1,15 +1,16 @@
 export interface Configuration {
-    'name': string;
-    'desc': string;
-    'training_steps': number;
-    'show_every': number;
-    'learning_rate': number;
-    'experience_size': number;
-    'minibatch_size': number;
-    'hidden_layer_sizes': number[];
-    'hidden_activation': string;
-    'actions_size': number;
-    'save_policy_every': number;
-    'mu_activation': string;
-    'sigma_activation': string;
+    name: string;
+    desc: string;
+    training_steps: number;
+    show_every: number;
+    learning_rate: number;
+    experience_size: number;
+    minibatch_size: number;
+    hidden_layer_sizes: number[];
+    hidden_activation: string;
+    actions_size: number;
+    save_policy_every: number;
+    mu_activation: string;
+    sigma_activation: string;
+    replace: boolean;
 }

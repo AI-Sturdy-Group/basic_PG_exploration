@@ -45,7 +45,8 @@ export class HomeComponent implements OnInit {
       actions_size: [1, Validators.min(1)],
       save_policy_every: [5, Validators.min(0)],
       mu_activation: ['tanh', Validators.required],
-      sigma_activation: ['softplus', Validators.required]
+      sigma_activation: ['softplus', Validators.required],
+      replace: [false, Validators.required]
     });
 
     this.keys = Object.keys(this.configurationForm.controls);
@@ -60,7 +61,7 @@ export class HomeComponent implements OnInit {
   }
 
   addHiddenLayer() {
-    this.getFormArray().push(this.fb.control(0));
+    this.getFormArray().push(this.fb.control(0, Validators.min(0)));
   }
 
   getFormArray() {
