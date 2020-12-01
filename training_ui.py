@@ -90,7 +90,7 @@ def start_training():
         logger.info(f"Saving experiment configurations to {experiment_config_file}")
         agent_config.to_json_file(experiment_config_file)
 
-        env = SimpleContinuousEnvironment()
+        env = SimpleContinuousEnvironment([4.0], 1, 1)
         policy = SimpleModel(model_path=Path(agent_path, "model"),
                              layer_sizes=agent_config.hidden_layer_sizes,
                              learning_rate=agent_config.learning_rate,

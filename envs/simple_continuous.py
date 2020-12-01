@@ -15,7 +15,8 @@ class SimpleContinuous(object):
     Used for test purposes.
     """
 
-    def __init__(self, step_target: np.array, max_reward_step: float, steps: int = 1, fixed_states: bool = True):
+    def __init__(self, step_target: np.array, max_reward_step: float, steps: int = 1,
+                 fixed_states: bool = True):
         """Creates a new simple continuous game
 
         Args:
@@ -49,7 +50,7 @@ class SimpleContinuous(object):
         reward = 0.
 
         for action in np.nditer(action):
-            reward += -((action - 4.0) ** 2) + 1.0
+            reward += -((action - self.step_target) ** 2) + 1.0
             self.sum_target += action
 
         self.define_state()
@@ -64,8 +65,8 @@ class SimpleContinuous(object):
 
 class SimpleContinuousEnvironment(Environment):
 
-    def __init__(self):
-        env = SimpleContinuous(step_target=np.array([4.]), max_reward_step=1., steps=1)
+    def __init__(self, step_target: np.array, max_reward_step: float, steps: int = 1):
+        env = SimpleContinuous(step_target, max_reward_step, steps)
         action_space = 1
         state_space = 1
         actions = ["action"]
@@ -91,7 +92,6 @@ class SimpleContinuousEnvironment(Environment):
             next_environment_state (np.array), reward (float), terminated_environment (bool)
         """
         action = (action * 4.) + 4.  # Action gets converted to range [0, 8]
-        print(action)
         return self.env.step(action)
 
     def get_possible_states(self) -> np.array:

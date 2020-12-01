@@ -119,7 +119,13 @@ class BasePolicyGradientAgent(object):
                 current_state = self.env.get_environment_state()
                 tf_current_state = tf.constant(np.array([current_state]), dtype=tf.float32)
                 action = self.policy.produce_actions(tf_current_state)[0][0]
-                next_state, reward, done = self.env.environment_step(action)
+                action_list = []
+                for a in action:
+                    if a > 0:
+                        action_list.append(min(1.0, a))
+                    elif a < 0:
+                        action_list.append(max(-1.0, a))
+                next_state, reward, done = self.env.environment_step(np.array(action_list))
 
                 states.append(current_state)
                 actions.append(action)
@@ -226,6 +232,12 @@ class BasePolicyGradientAgent(object):
                                 tf.summary.histogram(f"{action}_sigma", data=action_sigmas, step=training_steps)
                                 wandb.log({"mu": wandb.Histogram(action_mus),
                                            "sigma": wandb.Histogram(action_sigmas)}, step=training_steps)
+                                wandb.log({'mu_w': wandb.Histogram(self.policy.get_layer("dense_mu").kernel.numpy()),
+                                           'mu_b': wandb.Histogram(self.policy.get_layer("dense_mu").bias.numpy()),
+                                           'sigma_w': wandb.Histogram(
+                                               self.policy.get_layer("dense_sigma").kernel.numpy()),
+                                           'sigma_b': wandb.Histogram(
+                                               self.policy.get_layer("dense_sigma").bias.numpy())})
 
                     self.policy.summary_writer.flush()
 
