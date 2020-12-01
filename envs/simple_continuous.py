@@ -7,7 +7,7 @@ import numpy as np
 SCRIPT_DIR = Path(os.path.abspath(sys.argv[0]))
 sys.path.append(str(SCRIPT_DIR.parent.parent.parent.parent))
 
-from environments.environments import Environment, Episode
+from envs.environments import Environment, Episode
 
 
 class SimpleContinuous(object):
@@ -81,10 +81,17 @@ class SimpleContinuousEnvironment(Environment):
         state = self.env.get_state()
         return np.array([state])
 
-    def environment_step(self, action: int) -> (np.array, float, bool):
+    def environment_step(self, action: float) -> (np.array, float, bool):
+        """Take an action in the environment.
 
-        action = (action * 4.) + 4.
+        Args:
+            action: A number between from the range [-1, 1]
 
+        Returns:
+            next_environment_state (np.array), reward (float), terminated_environment (bool)
+        """
+        action = (action * 4.) + 4.  # Action gets converted to range [0, 8]
+        print(action)
         return self.env.step(action)
 
     def get_possible_states(self) -> np.array:

@@ -8,7 +8,7 @@ SCRIPT_DIR = Path(os.path.abspath(sys.argv[0]))
 sys.path.append(str(SCRIPT_DIR.parent.parent.parent.parent))
 
 from agents.base_pg import BasePolicyGradientAgent, TrainingExperience
-from environments import Environment, EpisodesBatch
+from envs import Environment, EpisodesBatch
 from models import SimpleModel
 from code_utils.config_utils import BaseConfig
 

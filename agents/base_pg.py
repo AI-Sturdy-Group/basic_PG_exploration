@@ -14,7 +14,7 @@ sys.path.append(str(SCRIPT_DIR.parent.parent.parent.parent))
 
 from models.models import SimpleModel
 from code_utils import BaseConfig
-from environments import Episode, Environment, EpisodesBatch
+from envs import Episode, Environment, EpisodesBatch
 
 
 logger = logging.getLogger()

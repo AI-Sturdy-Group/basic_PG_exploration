@@ -9,7 +9,7 @@ from flask import Flask, render_template, request
 from flask_cors import CORS
 
 from agents import NaivePolicyGradientAgent, BaseAgentConfig
-from environments import SimpleContinuousEnvironment
+from envs import SimpleContinuousEnvironment
 from models import SimpleModel
 from code_utils import prepare_stream_logger, prepare_file_logger
 
