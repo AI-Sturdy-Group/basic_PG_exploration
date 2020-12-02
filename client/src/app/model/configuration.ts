@@ -12,5 +12,8 @@ export interface Configuration {
     save_policy_every: number;
     mu_activation: string;
     sigma_activation: string;
+    true_action: number;
+    start_mu: number;
+    start_sigma: number;
     replace: boolean;
 }

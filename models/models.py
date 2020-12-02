@@ -22,7 +22,8 @@ class SimpleModel(Model):
 
     def __init__(self, model_path: Path, layer_sizes: List[int], learning_rate: float,
                  actions_size: int, hidden_activation: str = "relu", mu_activation: str = "tanh",
-                 sigma_activation: str = "relu"):
+                 sigma_activation: str = "relu", target_action: float = 3.0,
+                 start_mu: float = 0.0, start_sigma: float = 1.0):
         """Creates a new FFNN model to represent a policy. Implements all needed
         methods from tf.keras.Model.
 
@@ -34,6 +35,9 @@ class SimpleModel(Model):
             hidden_activation: Activation function for hidden layer neurons
             mu_activation: Activation function for mu
             sigma_activation: Activation function for sigma
+            target_action: The game best possible action
+            start_mu: The starting Mu value
+            start_sigma: The starting Sigma value
         """
 
         super(SimpleModel, self).__init__()
@@ -44,6 +48,9 @@ class SimpleModel(Model):
         self.hidden_activation = hidden_activation
         self.mu_activation = mu_activation
         self.sigma_activation = sigma_activation
+        self.target_action = target_action
+        self.start_mu = start_mu
+        self.start_sigma = start_sigma
 
         self.hidden_layers = []
         for i in self.layer_sizes:
@@ -51,10 +58,10 @@ class SimpleModel(Model):
                                             name=f"hidden_{len(self.hidden_layers)}"))
 
         self.mu = Dense(self.output_size, activation=self.mu_activation, name="dense_mu",
-                        kernel_initializer=initializers.Ones(),
+                        kernel_initializer=initializers.Constant(self.start_mu),
                         bias_initializer=initializers.Zeros())
         self.sigma = Dense(self.output_size, activation=self.sigma_activation, name="dense_sigma",
-                           kernel_initializer=initializers.Ones(),
+                           kernel_initializer=initializers.Constant(self.start_sigma),
                            bias_initializer=initializers.Zeros())
 
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)

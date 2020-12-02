@@ -118,6 +118,30 @@
                         </td>
                     </tr>
                     <tr>
+                        <td class="text-right"><label for="">Target action</label></td>
+                        <td>
+                            <input type="text" class="form-control"
+                                [ngClass]="{'is-invalid': configurationForm.get('true_action').errors && configurationForm.get('true_action').touched}"
+                                formControlName="true_action">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-right"><label for="">Starting Mu</label></td>
+                        <td>
+                            <input type="text" class="form-control"
+                                [ngClass]="{'is-invalid': configurationForm.get('start_mu').errors && configurationForm.get('start_mu').touched}"
+                                formControlName="start_mu">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-right"><label for="">Starting Sigma</label></td>
+                        <td>
+                            <input type="text" class="form-control"
+                                [ngClass]="{'is-invalid': configurationForm.get('start_sigma').errors && configurationForm.get('start_sigma').touched}"
+                                formControlName="start_sigma">
+                        </td>
+                    </tr>
+                    <tr>
                         <td class="text-right"><label for="">Replace previous train?</label></td>
                         <td>
                             <input type="checkbox" class="form-control" formControlName="replace">

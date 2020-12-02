@@ -34,6 +34,9 @@ class BaseAgentConfig(BaseConfig):
         self.save_policy_every = self.config_dict["save_policy_every"]
         self.actions_size = self.config_dict["actions_size"]
         self.sigma_activation = self.config_dict["sigma_activation"]
+        self.true_action = self.config_dict["true_action"]
+        self.start_mu = self.config_dict["start_mu"]
+        self.start_sigma = self.config_dict["start_sigma"]
 
 
 class REINFORCEAgentConfig(BaseAgentConfig):

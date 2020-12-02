@@ -90,14 +90,16 @@ def start_training():
         logger.info(f"Saving experiment configurations to {experiment_config_file}")
         agent_config.to_json_file(experiment_config_file)
 
-        env = SimpleContinuousEnvironment([4.0], 1, 1)
+        env = SimpleContinuousEnvironment([agent_config.true_action], 1, 1)
         policy = SimpleModel(model_path=Path(agent_path, "model"),
                              layer_sizes=agent_config.hidden_layer_sizes,
                              learning_rate=agent_config.learning_rate,
                              actions_size=agent_config.actions_size,
                              hidden_activation=agent_config.hidden_activation,
                              mu_activation=agent_config.mu_activation,
-                             sigma_activation=agent_config.sigma_activation)
+                             sigma_activation=agent_config.sigma_activation,
+                             start_mu=agent_config.start_mu,
+                             start_sigma=agent_config.start_sigma)
         agent = NaivePolicyGradientAgent(env=env,
                                          agent_path=agent_path,
                                          policy=policy,
