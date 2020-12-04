@@ -1,29 +1,30 @@
 <!doctype html>
 <html>
     <head>
-        <title>Training Laboratory</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+        <title>Training experiments</title>
     </head>
     <body>
-        <h1>Train an agent that uses basic policy gradient methods to
-        solve the SimpleContinuous environment</h1>
+        <h1>Reinforcement Learning - Base Policy gradient in simplistic environment</h1>
 
-        <form action="/start_training" method="post">
-            <table>
-                <tr>
-                    <th style="width: 50%">Configuration</th>
-                    <th style="width: 50%">Value</th>
-                </tr>
-                {% for name, value in arguments.items() %}
-                <tr>
-                    <td style="text-align: right">{{name}}:</td>
-                    <td>
-                    <input type="text" name={{name}} value={{value}}>
-                    </td>
-                </tr>
-                {% endfor %}
-            </table>
+        <h2>Agent</h2>
+        <p>We are aiming to create and train a <b>stochastic</b> agent. This means
+            that the agent doesn't gives a single action to take in a state, but instead it
+            outputs a probability distribution of taking different actions. Then we pick a single
+            action from that distribution, and take a step in the environment.</p>
+        <p>The environment is <b>continuous</b> so we don't have a finite number of actions
+            to chose from, we have a range of possible action values (e.g. [-4, 4]), and we can
+            chose any number from it as our action in each step (e.g. 1,541).</p>
+        <p>We will design the agent to output a <a href="https://en.wikipedia.org/wiki/Normal_distribution">Gaussian Distribution</a>
+            and we will pick action from that. The distribution is completely defined by it's <b>mean (&mu;)</b>
+            and <b>variance (&sigma;)</b>, so we need our agent to be able to output this two values.</p>
+        <p>This is a simple overview of the system functionality:</p>
 
-            <button style="cursor: pointer;" type="Submit" value="Submit">Submit</button>
-        </form>
+
+    <h2>Resources and References</h2>
+    <ul>
+        <li><a href="https://www.intmath.com/counting-probability/normal-distribution-graph-interactive.php">Gaussian Distribution Viewer</a></li>
+    </ul>
+
     </body>
 </html>
