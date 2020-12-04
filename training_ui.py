@@ -5,7 +5,7 @@ import shutil
 from pathlib import Path
 
 import git
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory
 from flask_cors import CORS
 
 from agents import NaivePolicyGradientAgent, BaseAgentConfig
@@ -41,10 +41,21 @@ DEFAULT_NAIVE_CONFIG = {
 
 
 # Home page
-@app.route("/")
-def home():
 
-    return render_template("index.html", arguments=DEFAULT_NAIVE_CONFIG)
+@app.route('/<path:path>', methods=['GET'])
+def static_proxy(path):
+    if path.endswith(".js"):
+        return send_from_directory('./client/dist/client/', path, mimetype="application/javascript")  
+    else:
+        return send_from_directory('./client/dist/client/', path)
+
+@app.route("/")
+def root():
+    return send_from_directory('./client/dist/client/', "index.html")
+
+@app.route("/docs")
+def home():
+    return render_template("index.html")
 
 
 @app.route("/start_training", methods=["POST", "GET"])
