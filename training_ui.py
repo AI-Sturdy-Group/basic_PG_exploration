@@ -41,7 +41,6 @@ DEFAULT_NAIVE_CONFIG = {
 
 
 # Home page
-
 @app.route('/<path:path>', methods=['GET'])
 def static_proxy(path):
     if path.endswith(".js"):
@@ -49,9 +48,11 @@ def static_proxy(path):
     else:
         return send_from_directory('./client/dist/client/', path)
 
+
 @app.route("/")
 def root():
     return send_from_directory('./client/dist/client/', "index.html")
+
 
 @app.route("/docs")
 def home():
