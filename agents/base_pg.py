@@ -45,6 +45,9 @@ class TrainingExperience(object):
         self.total_rewards = np.array(total_rewards, dtype=np.float32)
         self.episode_lengths = np.array(episode_lengths, dtype=np.int32)
 
+    def __str__(self):
+        return str(self.__dict__)
+
     def __len__(self):
         """
         Returns:
