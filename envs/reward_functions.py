@@ -1,7 +1,7 @@
 class LinearReward(object):
 
-    def __init__(self, max_reward: float = 1., min_reward: float = 0., min_action: float = 0.,
-                 max_action: float = 8., target_action: float = 4.5):
+    def __init__(self, max_reward: float = 1., min_reward: float = 0., min_action: float = -1.,
+                 max_action: float = 1., target_action: float = 0.5):
 
         assert min_reward < max_reward
         assert min_action < max_action

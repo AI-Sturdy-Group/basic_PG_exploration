@@ -22,7 +22,7 @@ class SimpleModel(Model):
 
     def __init__(self, model_path: Path, layer_sizes: List[int], learning_rate: float,
                  actions_size: int, hidden_activation: str = "relu", mu_activation: str = "tanh",
-                 sigma_activation: str = "relu", target_action: float = 3.0,
+                 sigma_activation: str = "softplus", target_action: float = 3.0,
                  start_mu: float = 0.0, start_sigma: float = 1.0):
         """Creates a new FFNN model to represent a policy. Implements all needed
         methods from tf.keras.Model.
@@ -105,7 +105,7 @@ class SimpleModel(Model):
         gradients = tape.gradient(loss, self.trainable_variables)
         self.optimizer.apply_gradients(zip(gradients, self.trainable_variables))
 
-        return (mu, sigma), loss, log_probabilities
+        return (mu, sigma), loss, log_probabilities, gradients
 
     @tf.function
     def _get_log_probabilities(self, mu: tf.Tensor, sigma: tf.Tensor, actions: tf.Tensor) -> tf.Tensor:
@@ -169,12 +169,12 @@ def test():
     actions = model.produce_actions(state)
     print(f"actions train= {actions}")
 
-    (mu, sigma), loss, log_probabilities = model.train_step(state, actions, reward)
+    (mu, sigma), loss, log_probabilities, gradients = model.train_step(state, actions, reward)
     print(f"Mu = {mu}")
     print(f"Sigma = {sigma}")
     print(f"loss = {loss}")
     print(f"log_probabilities train= {log_probabilities}")
-
+    print(f"gradients train= {gradients}")
     pass
 
 

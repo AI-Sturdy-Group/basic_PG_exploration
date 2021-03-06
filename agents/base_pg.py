@@ -196,7 +196,7 @@ class BasePolicyGradientAgent(object):
 
             for minibatch_step, data_batch in enumerate(data):
 
-                policy_outputs, loss, log_probabilities = self.policy.train_step(
+                policy_outputs, loss, log_probabilities, _ = self.policy.train_step(
                     data_batch[0], data_batch[1], data_batch[2])
 
                 if minibatch_step == len(data) - 1:

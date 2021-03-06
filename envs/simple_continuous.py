@@ -16,8 +16,8 @@ class BaseSimpleContinuous(object):
     Only one possible state. Different reward functions available.
     """
 
-    def __init__(self, max_reward: float = 1., min_reward: float = 0., min_action: float = 0.,
-                 max_action: float = 8., target_action: float = 4.5, reward_function: str = "linear"):
+    def __init__(self, max_reward: float = 1., min_reward: float = 0., min_action: float = -1.,
+                 max_action: float = 1., target_action: float = 0.5, reward_function: str = "linear"):
         """Creates a new simple continuous game
 
         Args:
@@ -158,8 +158,8 @@ class SimpleContinuousEnvironment(Environment):
 
 class BaseSimpleContinuousEnvironment(Environment):
 
-    def __init__(self, max_reward: float = 1., min_reward: float = 0., min_action: float = 0.,
-                 max_action: float = 8., target_action: float = 4.5, reward_function: str = "linear"):
+    def __init__(self, max_reward: float = 1., min_reward: float = 0., min_action: float = -1.,
+                 max_action: float = 1., target_action: float = 0.5, reward_function: str = "linear"):
 
         env = BaseSimpleContinuous(max_reward=max_reward,
                                    min_reward=min_reward,
@@ -193,8 +193,8 @@ class BaseSimpleContinuousEnvironment(Environment):
             next_environment_state (np.array), reward (float), terminated_environment (bool)
         """
 
-        # Action gets converted to possible values range
-        action = (action * (self.range_size / 2)) + (self.range_size / 2)
+        # Action gets converted to possible values range (simple linear conversion)
+        action = (((action - -1.) * self.range_size) / 2.) + self.env.min_action
         return self.env.step(action)
 
     def get_possible_states(self) -> np.array:
@@ -215,9 +215,9 @@ class BaseSimpleContinuousEnvironment(Environment):
 
 
 def main():
-    env = SimpleContinuousEnvironment()
+    env = BaseSimpleContinuousEnvironment()
     print(env.get_environment_state())
-    print(env.environment_step())
+    print(env.environment_step(np.array)(0))
 
 
 if __name__ == '__main__':
