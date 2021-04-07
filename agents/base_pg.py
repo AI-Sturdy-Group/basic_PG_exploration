@@ -159,7 +159,7 @@ class BasePolicyGradientAgent(object):
             The final policy test mean reward
         """
 
-        wandbrun = wandb.init(project="SimpleContinuous",
+        wandbrun = wandb.init(project="BaseSimpleContinuous",
                               group="naive",
                               name=self.agent_config.name,
                               notes=self.agent_config.desc,
@@ -185,8 +185,14 @@ class BasePolicyGradientAgent(object):
                                 f"Batch time = {time.time() - start_time} sec")
                     start_time = time.time()
 
+            if self.agent_config.normalize_rewards:
+                normalized_weights = training_experience.weights - np.mean(training_experience.weights)
+                normalized_weights /= np.std(normalized_weights)
+                weights_batch = tf.constant(normalized_weights, dtype=np.float32)
+            else:
+                weights_batch = tf.constant(training_experience.weights, dtype=np.float32)
+
             states_batch = tf.constant(training_experience.states, dtype=np.float32)
-            weights_batch = tf.constant(training_experience.weights, dtype=np.float32)
             actions_batch = tf.constant(training_experience.actions, dtype=np.float32)
 
             batch_size = minibatch_size if minibatch_size is not None else len(states_batch)
@@ -212,15 +218,16 @@ class BasePolicyGradientAgent(object):
                         tf.summary.scalar("loss", data=loss, step=training_steps)
                         tf.summary.histogram("log_probabilities", data=log_probabilities, step=training_steps)
                         tf.summary.histogram("weights", data=data_batch[2], step=training_steps)
-                        wandb.log({"log_probabilities": wandb.Histogram(log_probabilities)}, step=training_steps)
+                        try:
+                            wandb.log({"log_probabilities": wandb.Histogram(log_probabilities)}, step=training_steps)
+                        except ValueError:
+                            logger.info(f"Failed to save log probabilities: {log_probabilities}")
                         wandb.log({"weights": wandb.Histogram(data_batch[2])}, step=training_steps)
 
                         for action_idx, action in enumerate(self.env.actions):
                             if len(self.env.actions) == 1:
                                 action_mu = policy_outputs[0][0, 0]
                                 action_sigma = policy_outputs[1][0, 0]
-                                tf.summary.scalar("mu", data=action_mu, step=training_steps)
-                                tf.summary.scalar("sigma", data=action_sigma, step=training_steps)
                                 wandb.log({'mu': action_mu, 'sigma': action_sigma}, step=training_steps)
                                 wandb.log({'mu_w': self.policy.get_layer("dense_mu").kernel.numpy()[0],
                                            'mu_b': self.policy.get_layer("dense_mu").bias.numpy()[0],

@@ -9,7 +9,7 @@ from flask import Flask, render_template, request, send_from_directory
 from flask_cors import CORS
 
 from agents import NaivePolicyGradientAgent, BaseAgentConfig
-from envs import SimpleContinuousEnvironment
+from envs import BaseSimpleContinuousEnvironment
 from models import SimpleModel
 from code_utils import prepare_stream_logger, prepare_file_logger
 
@@ -102,7 +102,8 @@ def start_training():
         logger.info(f"Saving experiment configurations to {experiment_config_file}")
         agent_config.to_json_file(experiment_config_file)
 
-        env = SimpleContinuousEnvironment([agent_config.true_action], 1, 1)
+        env = BaseSimpleContinuousEnvironment(target_action=float(agent_config.true_action),
+                                              min_reward=-10)
         policy = SimpleModel(model_path=Path(agent_path, "model"),
                              layer_sizes=agent_config.hidden_layer_sizes,
                              learning_rate=agent_config.learning_rate,
@@ -139,4 +140,4 @@ def start_training():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()

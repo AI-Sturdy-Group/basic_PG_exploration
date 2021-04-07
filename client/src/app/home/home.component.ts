@@ -48,8 +48,9 @@ export class HomeComponent implements OnInit {
       sigma_activation: ['softplus', Validators.required],
       true_action: [3, Validators.min(0)],
       start_mu: [0, Validators.min(-1)],
-      start_sigma: [1, Validators.min(0)],
-      replace: [false, Validators.required]
+      start_sigma: [1, Validators.min(-2)],
+      replace: [false, Validators.required],
+      normalize_rewards: [false, Validators.required]
     });
 
     this.keys = Object.keys(this.configurationForm.controls);

@@ -16,4 +16,5 @@ export interface Configuration {
     start_mu: number;
     start_sigma: number;
     replace: boolean;
+    normalize_rewards: boolean;
 }

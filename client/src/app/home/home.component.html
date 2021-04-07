@@ -148,6 +148,12 @@
                         </td>
                     </tr>
                     <tr>
+                        <td class="text-right"><label for="">Normalize rewards?</label></td>
+                        <td>
+                            <input type="checkbox" class="form-control" formControlName="normalize_rewards">
+                        </td>
+                    </tr>
+                    <tr>
                         <td></td>
                         <td class="text-right">
                             <button type="button" [disabled]="configurationForm.invalid" [tooltip]="buttonDesc" placement="auto" class="btn btn-sm btn-primary" (click)="runExperiment()"><i class="fa fa-train"></i></button>

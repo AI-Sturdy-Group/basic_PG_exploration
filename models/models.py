@@ -22,7 +22,7 @@ class SimpleModel(Model):
 
     def __init__(self, model_path: Path, layer_sizes: List[int], learning_rate: float,
                  actions_size: int, hidden_activation: str = "relu", mu_activation: str = "tanh",
-                 sigma_activation: str = "softplus", target_action: float = 3.0,
+                 sigma_activation: str = "softplus",
                  start_mu: float = 0.0, start_sigma: float = 1.0):
         """Creates a new FFNN model to represent a policy. Implements all needed
         methods from tf.keras.Model.
@@ -35,7 +35,6 @@ class SimpleModel(Model):
             hidden_activation: Activation function for hidden layer neurons
             mu_activation: Activation function for mu
             sigma_activation: Activation function for sigma
-            target_action: The game best possible action
             start_mu: The starting Mu value
             start_sigma: The starting Sigma value
         """
@@ -48,7 +47,6 @@ class SimpleModel(Model):
         self.hidden_activation = hidden_activation
         self.mu_activation = mu_activation
         self.sigma_activation = sigma_activation
-        self.target_action = target_action
         self.start_mu = start_mu
         self.start_sigma = start_sigma
 

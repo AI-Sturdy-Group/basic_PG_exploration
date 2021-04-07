@@ -35,8 +35,9 @@ class BaseAgentConfig(BaseConfig):
         self.actions_size = self.config_dict["actions_size"]
         self.sigma_activation = self.config_dict["sigma_activation"]
         self.true_action = self.config_dict["true_action"]
-        self.start_mu = self.config_dict["start_mu"]
-        self.start_sigma = self.config_dict["start_sigma"]
+        self.start_mu = float(self.config_dict["start_mu"])
+        self.start_sigma = float(self.config_dict["start_sigma"])
+        self.normalize_rewards = self.config_dict["normalize_rewards"]
 
 
 class REINFORCEAgentConfig(BaseAgentConfig):
