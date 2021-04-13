@@ -29,3 +29,17 @@ class LinearReward(object):
             reward = reward * (self.min_reward - self.max_reward)
             reward = reward + self.max_reward
             return reward
+
+
+class MaxRangeReward(object):
+
+    def __init__(self, max_reward: float = 1., target_action: float = 0.5):
+
+        self.max_reward = max_reward
+        self.target_action = target_action
+
+    def calculate_reward(self, action: float):
+
+        reward = self.max_reward / max(0.05, abs(self.target_action - action)) * 0.05
+
+        return reward

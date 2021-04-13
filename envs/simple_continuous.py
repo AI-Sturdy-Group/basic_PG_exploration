@@ -8,7 +8,7 @@ SCRIPT_DIR = Path(os.path.abspath(sys.argv[0]))
 sys.path.append(str(SCRIPT_DIR.parent.parent.parent.parent))
 
 from envs.environments import Environment, Episode
-from envs.reward_functions import LinearReward
+from envs.reward_functions import LinearReward, MaxRangeReward
 
 
 class BaseSimpleContinuous(object):
@@ -42,6 +42,9 @@ class BaseSimpleContinuous(object):
                                                 min_action=min_action,
                                                 max_action=max_action,
                                                 target_action=target_action)
+        elif reward_function == "max_range":
+            self.reward_function = MaxRangeReward(max_reward=max_reward,
+                                                  target_action=target_action)
         else:
             raise ValueError(f"Reward function {reward_function} was not found.")
 
